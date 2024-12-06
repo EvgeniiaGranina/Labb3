@@ -21,9 +21,10 @@ public class Main {
         System.out.println("\nChoose:\n");
         System.out.println("0  - Turn off\n" +
                 "1  - Show all recipes\n" +
-                "2  - Show all ingredients" +
+                "2  - Show all ingredients\n" +
                 "3 - Add a new recipe\n" +
-                "4  - Update a recipe\n" +
+                "4  - Add a new ingredient\n" +
+                "5 - Update a recipe\n" +
                 "5  - Delete a recipe\n" +
                 "6  - Show a list of all choices.");
     }
@@ -62,7 +63,8 @@ public class Main {
                 System.out.println(ingredientSet.getInt("ingredientId") + "\t" +
                         ingredientSet.getString("ingredientName") + "\t" +
                         ingredientSet.getString("ingredientAmount") + "\t" +
-                        ingredientSet.getInt("ingredientPrice"));
+                        ingredientSet.getInt("ingredientPrice") + "\t" +
+                        ingredientSet.getInt("ingredientRecipeId"));
             }
         } catch (SQLException e) {
             System.out.println(e.getMessage());
@@ -111,20 +113,35 @@ public class Main {
         }
     }
 
-    private static void albumInsert(String title, int year, int rating, int genreId, int artistId) {
-        //String sql = "INSERT INTO bok(bokTitel, bokForfattare, bokPris) VALUES(?,?,?)";
-        String sql = " INSERT INTO album(albumTitle, albumYear, albumRating, albumGenreId, albumArtistId) " +
-                " VALUES(?,?,?,?,?) ";
+    private static void recipeInsert(String name, String category) {
+
+        String sql = " INSERT INTO recipe(recipeName, recipeCategory) " +
+                " VALUES(?,?) ";
         try{
             Connection conn = connect();
             PreparedStatement pstmt = conn.prepareStatement(sql);
-            pstmt.setString(1, title);
-            pstmt.setInt(2, year);
-            pstmt.setInt(3, rating);
-            pstmt.setInt(4, genreId);
-            pstmt.setInt(5, artistId);
+            pstmt.setString(1, name);
+            pstmt.setString(2, category);
             pstmt.executeUpdate();
-            System.out.println("Du har lagt till en ny albun");
+            System.out.println("You have added a new recipe");
+        } catch (SQLException e) {
+            System.out.println(e.getMessage());
+        }
+    }
+
+    private static void ingredientInsert(String name, String amount, int price, int recipeId) {
+
+        String sql = " INSERT INTO ingredient(ingredientName, ingredientAmount, ingredientPrice, ingredientRecipeId) " +
+                " VALUES(?,?,?,?) ";
+        try{
+            Connection conn = connect();
+            PreparedStatement pstmt = conn.prepareStatement(sql);
+            pstmt.setString(1, name);
+            pstmt.setString(2, amount);
+            pstmt.setInt(3, price);
+            pstmt.setInt(4, recipeId);
+            pstmt.executeUpdate();
+            System.out.println("You have added a new ingredient");
         } catch (SQLException e) {
             System.out.println(e.getMessage());
         }
@@ -154,18 +171,38 @@ public class Main {
                     break;
 
                 case 3:
-                    albumInsert("Meddle", 1970, 4, 2, 2);
-                    //bookInsert("Sagan om ringen", "Tolkien, J.R.R", 120);
+                    System.out.println("Inter the recipe name");
+                    String recipeName = scanner.nextLine();
+
+                    System.out.println("Inter the recipe category");
+                    String recipeCategory = scanner.nextLine();
+
+                    recipeInsert(recipeName, recipeCategory);
                     break;
 
                 case 4:
-                    recipeSelectValue();
+                    System.out.println("Inter the ingredient name");
+                    String ingredientName = scanner.nextLine();
+
+                    System.out.println("Inter the ingredient amount");
+                    String ingredientAmount = scanner.nextLine();
+
+                    System.out.println("Inter the ingredient price");
+                    int ingredientPrice = scanner.nextInt();
+
+                    System.out.println("Inter the recipe id");
+                    int recipeId = scanner.nextInt();
+                    ingredientInsert(ingredientName, ingredientAmount, ingredientPrice, recipeId);
+                    break;
 
                 case 5:
+                    recipeSelectValue();
+
+                case 6:
                     inputRecipeDelete();
                     break;
 
-                case 6:
+                case 7:
                     printActions();
                     break;
             }
