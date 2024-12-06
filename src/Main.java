@@ -6,7 +6,7 @@ public class Main {
     private static Scanner scanner = new Scanner(System.in);
 
     private static Connection connect() {
-        // SQLite connection string
+
         String url = "jdbc:sqlite:C:/Users/EvgeniiaGranina/Database/SQLite/java24evgeniiagranina.db";
         Connection conn = null;
         try {
@@ -25,8 +25,8 @@ public class Main {
                 "3 - Add a new recipe\n" +
                 "4  - Add a new ingredient\n" +
                 "5 - Update a recipe\n" +
-                "5  - Delete a recipe\n" +
-                "6  - Show a list of all choices.");
+                "6  - Delete a recipe\n" +
+                "7  - Show a list of all choices.");
     }
 
     private static void inputRecipeDelete(){
@@ -147,12 +147,34 @@ public class Main {
         }
     }
 
+    private static void recipeUpdate(String name, String category, int id) {
+        //String sql = " UPDATE recipe SET recipeName = ?, recipeCategory = " +
+
+
+        String sql = "UPDATE recipe SET recipeName = ? , "
+                + " recipeCategory = ?  "
+                + " WHERE recipeId = ? ";
+
+        try (Connection conn = connect();
+             PreparedStatement pstmt = conn.prepareStatement(sql)) {
+
+            pstmt.setString(1, name);
+            pstmt.setString(2, category);
+            pstmt.setInt(3, id);
+
+            pstmt.executeUpdate();
+            System.out.println("You have updated the selected recipe");
+        } catch (SQLException e) {
+            System.out.println(e.getMessage());
+        }
+    }
+
     public static void main(String[] args) {
 
         boolean quit = false;
         printActions();
         while(!quit) {
-            System.out.println("\nSelect (5 to show selection):");
+            System.out.println("\nSelect (7 to show selection):");
             int action = scanner.nextInt();
             scanner.nextLine();
 
@@ -196,13 +218,27 @@ public class Main {
                     break;
 
                 case 5:
-                    recipeSelectValue();
+                    System.out.println("Inter the recipe name");
+                    String name = scanner.nextLine();
+
+                    System.out.println("Inter the recipe category");
+                    String category = scanner.nextLine();
+
+                    System.out.println("Inter the recipe id");
+                    int id = scanner.nextInt();
+
+                    recipeUpdate(name, category, id);
+                    break;
 
                 case 6:
-                    inputRecipeDelete();
+                    recipeSelectValue();
                     break;
 
                 case 7:
+                    inputRecipeDelete();
+                    break;
+
+                case 8:
                     printActions();
                     break;
             }
