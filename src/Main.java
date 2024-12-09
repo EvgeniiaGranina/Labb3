@@ -25,8 +25,9 @@ public class Main {
                 "3 - Add a new recipe\n" +
                 "4  - Add a new ingredient\n" +
                 "5 - Update a recipe\n" +
-                "6  - Delete a recipe\n" +
-                "7  - Show a list of all choices.");
+                "6  - Update a ingredient\n" +
+                "7 - Delete a recipe\n" +
+                "8  - Show a list of all choices.");
     }
 
     private static void inputRecipeDelete(){
@@ -148,8 +149,6 @@ public class Main {
     }
 
     private static void recipeUpdate(String name, String category, int id) {
-        //String sql = " UPDATE recipe SET recipeName = ?, recipeCategory = " +
-
 
         String sql = "UPDATE recipe SET recipeName = ? , "
                 + " recipeCategory = ?  "
@@ -169,12 +168,35 @@ public class Main {
         }
     }
 
+    private static void ingredientUpdate(String name, String amount, int price, int id) {
+
+        String sql = "UPDATE ingredient SET ingredientName = ? , "
+                + " ingredientAmount = ? , "
+                + " ingredientPrice = ?  "
+                + " WHERE ingredientId = ? ";
+
+
+        try (Connection conn = connect();
+             PreparedStatement pstmt = conn.prepareStatement(sql)) {
+
+            pstmt.setString(1, name);
+            pstmt.setString(2, amount);
+            pstmt.setInt(3, price);
+            pstmt.setInt(4, id);
+
+            pstmt.executeUpdate();
+            System.out.println("You have updated the selected ingredient");
+        } catch (SQLException e) {
+            System.out.println(e.getMessage());
+        }
+    }
+
     public static void main(String[] args) {
 
         boolean quit = false;
         printActions();
         while(!quit) {
-            System.out.println("\nSelect (7 to show selection):");
+            System.out.println("\nSelect (9 to show selection):");
             int action = scanner.nextInt();
             scanner.nextLine();
 
@@ -231,14 +253,30 @@ public class Main {
                     break;
 
                 case 6:
-                    recipeSelectValue();
+                    System.out.println("Inter the ingredient name");
+                    String ingrName = scanner.nextLine();
+
+                    System.out.println("Inter the ingredients amount");
+                    String amount = scanner.nextLine();
+
+                    System.out.println("Inter the ingredient price");
+                    int price = scanner.nextInt();
+
+                    System.out.println("Inter the ingredient id");
+                    int ingrId = scanner.nextInt();
+
+                    ingredientUpdate(ingrName, amount, price, ingrId);
                     break;
 
                 case 7:
-                    inputRecipeDelete();
+                    recipeSelectValue();
                     break;
 
                 case 8:
+                    inputRecipeDelete();
+                    break;
+
+                case 9:
                     printActions();
                     break;
             }
